@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mohammad Junaid | Software Engineer</title>
+  <meta name="description" content="Mohammad Junaid — Software Engineering student, builder & creative technologist based in Karachi, Pakistan." />
+  <meta name="theme-color" content="#050505" />
+
+  <!-- Preconnect for critical fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Critical font load -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700&family=Outfit:wght@200;300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Alpine.js — must NOT be deferred so x-init runs correctly -->
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* ─── CSS Custom Properties ─────────────────────────── */
+    :root {
+      --gold: #c1a362;
+      --gold-dim: rgba(193,163,98,0.15);
+      --off-black: #050505;
+      --mid-black: #0a0a0a;
+      --card-bg: #0d0d0d;
+      --border: rgba(255,255,255,0.06);
+      --font-sans: 'Inter', sans-serif;
+      --font-display: 'Outfit', sans-serif;
+      --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+      --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+    }
+
+    /* ─── Reset & Base ───────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+    }
+
+    body {
+      background: var(--off-black);
+      color: #fff;
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+    }
+
+    .font-display { font-family: var(--font-display); }
+
+    /* ─── Scrollbar ───────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: #000; }
+    ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 10px; }
+
+    /* ─── Grain Overlay ─────────────────────────────────── */
+    .grain::after {
+      content: "";
+      position: fixed;
+      inset: -50%;
+      width: 200%; height: 200%;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.03;
+      pointer-events: none;
+      z-index: 9998;
+      animation: grain 6s steps(8) infinite;
+      will-change: transform;
+    }
+    @keyframes grain {
+      0%   { transform: translate(0,0); }
+      20%  { transform: translate(-3%,-6%); }
+      40%  { transform: translate(3%,-3%); }
+      60%  { transform: translate(-6%,3%); }
+      80%  { transform: translate(3%,6%); }
+      100% { transform: translate(0,0); }
+    }
+
+    /* ─── Cursor ─────────────────────────────────────────── */
+    .cursor-dot, .cursor-ring {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
+      transform: translate(-50%, -50%);
+      will-change: transform;
+      transition: opacity 0.3s ease;
+    }
+    .cursor-dot {
+      width: 6px; height: 6px;
+      background: var(--gold);
+      top: 0; left: 0;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid rgba(193,163,98,0.5);
+      top: 0; left: 0;
+      transition: width 0.25s var(--ease-out-expo),
+                  height 0.25s var(--ease-out-expo),
+                  background 0.25s ease,
+                  border-color 0.25s ease;
+    }
+    .cursor-ring.cursor-hover {
+      width: 56px; height: 56px;
+      background: var(--gold-dim);
+      border-color: var(--gold);
+    }
+    @media (hover: none) { .cursor-dot, .cursor-ring { display: none; } }
+
+    /* ─── Page Loader ─────────────────────────────────────── */
+    .page-loader {
+      position: fixed; inset: 0;
+      background: var(--off-black);
+      z-index: 99997;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 2rem;
+      transition: opacity 0.8s ease, transform 0.8s var(--ease-out-expo);
+    }
+    .page-loader.done {
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-20px);
+    }
+    .loader-bar-wrap {
+      width: 180px; height: 1px;
+      background: rgba(255,255,255,0.08);
+      overflow: hidden;
+    }
+    .loader-bar {
+      height: 100%;
+      background: var(--gold);
+      width: 0%;
+      animation: loadBar 1.3s var(--ease-out-expo) forwards;
+    }
+    @keyframes loadBar { to { width: 100%; } }
+    .loader-text {
+      font-size: 9px;
+      letter-spacing: 0.55em;
+      color: var(--gold);
+      font-weight: 700;
+      text-transform: uppercase;
+      animation: pulse 1.3s ease infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:0.4} 50%{opacity:1} }
+
+    /* ─── Scroll Reveal System ───────────────────────────── */
+    [data-reveal] {
+      opacity: 0;
+      transform: translateY(50px);
+      transition: opacity 0.9s var(--ease-out-expo), transform 0.9s var(--ease-out-expo);
+    }
+    [data-reveal="left"] {
+      transform: translateX(-60px);
+    }
+    [data-reveal="right"] {
+      transform: translateX(60px);
+    }
+    [data-reveal="scale"] {
+      transform: scale(0.92) translateY(20px);
+    }
+    [data-reveal="fade"] {
+      transform: none;
+    }
+    [data-reveal].revealed {
+      opacity: 1;
+      transform: translateY(0) translateX(0) scale(1);
+    }
+    /* Stagger children */
+    [data-stagger] > * {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s var(--ease-out-expo), transform 0.7s var(--ease-out-expo);
+    }
+    [data-stagger].revealed > *:nth-child(1) { opacity: 1; transform: none; transition-delay: 0ms; }
+    [data-stagger].revealed > *:nth-child(2) { opacity: 1; transform: none; transition-delay: 80ms; }
+    [data-stagger].revealed > *:nth-child(3) { opacity: 1; transform: none; transition-delay: 160ms; }
+    [data-stagger].revealed > *:nth-child(4) { opacity: 1; transform: none; transition-delay: 240ms; }
+    [data-stagger].revealed > *:nth-child(5) { opacity: 1; transform: none; transition-delay: 320ms; }
+    [data-stagger].revealed > *:nth-child(6) { opacity: 1; transform: none; transition-delay: 400ms; }
+
+    /* ─── Nav ─────────────────────────────────────────────── */
+    .nav-blur {
+      background: rgba(5,5,5,0);
+      backdrop-filter: blur(0px);
+      transition: background 0.4s ease, backdrop-filter 0.4s ease;
+    }
+    .nav-blur.scrolled {
+      background: rgba(5,5,5,0.7);
+      backdrop-filter: blur(20px);
+    }
+    .nav-pill {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+    }
+
+    /* ─── Hero Section ───────────────────────────────────── */
+    .hero-section { position: relative; width: 100%; height: 100svh; overflow: hidden; }
+
+    .hero-video {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1.2s ease 0.5s;
+      will-change: opacity, transform;
+    }
+    .hero-video.loaded { opacity: 0.55; }
+
+    /* Parallax wrapper */
+    .hero-parallax {
+      position: absolute; inset: 0;
+      will-change: transform;
+    }
+
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(5,5,5,0.3) 0%,
+        rgba(5,5,5,0.1) 40%,
+        rgba(5,5,5,0.6) 80%,
+        rgba(5,5,5,1) 100%
+      );
+      z-index: 2;
+    }
+
+    .hero-content {
+      position: relative; z-index: 3;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100%;
+      text-align: center;
+      padding: 0 1.5rem;
+    }
+
+    .hero-eyebrow {
+      font-size: 9px;
+      letter-spacing: 0.5em;
+      color: var(--gold);
+      font-weight: 700;
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s var(--ease-out-expo) 1.6s forwards;
+    }
+
+    .hero-title {
+      font-size: clamp(2.2rem, 5.5vw, 3.5rem);
+      font-weight: 300;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      margin-top: 1.5rem;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 1s var(--ease-out-expo) 1.8s forwards;
+    }
+
+    .hero-sub {
+      font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+      color: rgba(255,255,255,0.4);
+      margin-top: 1.2rem;
+      max-width: 34rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeUp 0.8s var(--ease-out-expo) 2.1s forwards;
+    }
+
+    .hero-cta-group {
+      display: flex; gap: 1rem; margin-top: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s var(--ease-out-expo) 2.3s forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Scroll indicator */
+    .scroll-indicator {
+      position: absolute; bottom: 2.5rem; left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex; flex-direction: column; align-items: center; gap: 0.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s ease 3s forwards;
+    }
+    .scroll-line {
+      width: 1px; height: 60px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent);
+      animation: scrollLine 2s ease infinite;
+    }
+    @keyframes scrollLine {
+      0%   { transform: scaleY(0); transform-origin: top; opacity: 1; }
+      50%  { transform: scaleY(1); transform-origin: top; opacity: 1; }
+      51%  { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+    }
+
+    /* ─── Marquee ─────────────────────────────────────────── */
+    .marquee-wrap {
+      overflow: hidden;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 1.2rem 0;
+      background: var(--mid-black);
+    }
+    .marquee-track {
+      display: flex;
+      width: max-content;
+      animation: marquee 24s linear infinite;
+      will-change: transform;
+    }
+    .marquee-track:hover { animation-play-state: paused; }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+    .marquee-item {
+      display: flex; align-items: center; gap: 2rem;
+      padding: 0 2rem;
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    .marquee-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); }
+
+    /* ─── Work / Projects ────────────────────────────────── */
+    .section-label {
+      font-size: 9px;
+      letter-spacing: 0.6em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    .project-pane {
+      flex: 1;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      transition: flex 0.7s var(--ease-out-expo);
+      border-right: 1px solid var(--border);
+      background: #070707;
+      cursor: pointer;
+    }
+    .expanding-grid { display: flex; }
+    .project-pane:last-child { border-right: none; }
+    .project-pane:hover { flex: 9; }
+
+    .project-pane-img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0.08;
+      filter: grayscale(1) brightness(0.5);
+      transform: scale(1.08);
+      transition: opacity 0.9s ease, filter 0.9s ease, transform 0.9s ease;
+      will-change: transform, opacity;
+    }
+    .project-pane:hover .project-pane-img {
+      opacity: 0.65;
+      filter: grayscale(0) brightness(0.55);
+      transform: scale(1);
+    }
+
+    .project-pane-label {
+      position: absolute;
+      bottom: 3rem; left: 3rem;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      transform: rotate(180deg);
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      font-weight: 700;
+      transition: opacity 0.4s ease;
+    }
+    .project-pane:hover .project-pane-label { opacity: 0; }
+
+    .project-pane-content {
+      position: absolute; inset: 0;
+      padding: 3rem;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, transparent 60%);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.5s ease 0.1s, transform 0.5s ease 0.1s;
+    }
+    .project-pane:hover .project-pane-content { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 768px) {
+      .expanding-grid { flex-direction: column; height: auto !important; }
+      .project-pane { height: 380px; border-right: none; border-bottom: 1px solid var(--border); }
+      .project-pane:hover { flex: none; }
+      .project-pane-label { writing-mode: unset; transform: none; bottom: auto; top: 1.5rem; left: 1.5rem; }
+      .project-pane-content { opacity: 1; transform: none; }
+    }
+
+    /* ─── Stats Row ───────────────────────────────────────── */
+    .stat-card {
+      border: 1px solid var(--border);
+      padding: 2.5rem;
+      border-radius: 1rem;
+      background: var(--card-bg);
+      transition: border-color 0.3s ease, transform 0.3s var(--ease-out-expo);
+    }
+    .stat-card:hover {
+      border-color: rgba(193,163,98,0.25);
+      transform: translateY(-4px);
+    }
+    .stat-num {
+      font-size: clamp(2.5rem, 5vw, 3.5rem);
+      font-weight: 200;
+      font-family: var(--font-display);
+      color: var(--gold);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    /* ─── Philosophy / About ─────────────────────────────── */
+    .philosophy-section {
+      background: var(--mid-black);
+      position: relative;
+      overflow: hidden;
+    }
+    .philosophy-section::before {
+      content: "";
+      position: absolute;
+      top: -40%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(193,163,98,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .philosophy-pill {
+      display: inline-flex; align-items: center; gap: 0.75rem;
+      padding: 0.6rem 1.25rem;
+      border: 1px solid rgba(193,163,98,0.25);
+      border-radius: 100px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    .big-quote {
+      font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+      font-family: var(--font-display);
+      font-weight: 300;
+      line-height: 1.3;
+      letter-spacing: -0.02em;
+    }
+
+    .skill-tag {
+      padding: 0.5rem 1.2rem;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.5);
+      font-weight: 500;
+      transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+      cursor: default;
+    }
+    .skill-tag:hover {
+      border-color: rgba(193,163,98,0.4);
+      color: var(--gold);
+      transform: scale(1.04);
+    }
+
+    /* ─── Timeline ───────────────────────────────────────── */
+    .timeline-item {
+      display: grid;
+      grid-template-columns: auto 1px 1fr;
+      gap: 0 2rem;
+      position: relative;
+    }
+    .timeline-year {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      font-weight: 700;
+      padding-top: 0.15rem;
+      white-space: nowrap;
+    }
+    .timeline-line {
+      width: 1px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      margin: 0 auto;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: calc(3.5rem + 1px);
+      top: 4px;
+      transform: translateX(-50%);
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 12px rgba(193,163,98,0.5);
+    }
+
+    /* ─── Contact ────────────────────────────────────────── */
+    .contact-section { background: #fafafa; color: #111; }
+
+    .input-field {
+      width: 100%;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid rgba(0,0,0,0.15);
+      padding: 1.1rem 0;
+      outline: none;
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      color: #111;
+      transition: border-color 0.25s ease;
+      letter-spacing: 0.03em;
+    }
+    .input-field::placeholder { color: rgba(0,0,0,0.35); letter-spacing: 0.1em; font-size: 10px; font-weight: 600; text-transform: uppercase; }
+    .input-field:focus { border-color: #111; }
+
+    /* ─── Footer ─────────────────────────────────────────── */
+    .footer-link {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: rgba(255,255,255,0.3);
+      transition: color 0.2s ease;
+    }
+    .footer-link:hover { color: var(--gold); }
+
+    /* ─── Utility ─────────────────────────────────────────── */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      padding: 0.85rem 2rem;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+    .btn-white {
+      background: #fff;
+      color: #111;
+    }
+    .btn-white:hover { background: rgba(255,255,255,0.88); transform: translateY(-2px); }
+    .btn-outline {
+      background: transparent;
+      color: rgba(255,255,255,0.6);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.4); color: #fff; transform: translateY(-2px); }
+    .btn-black {
+      background: #111;
+      color: #fff;
+    }
+    .btn-black:hover { background: #222; transform: translateY(-2px); }
+
+    /* Progress bar top */
+    .progress-bar {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--gold);
+      transform-origin: left;
+      transform: scaleX(0);
+      z-index: 100000;
+      transition: transform 0.1s linear;
+    }
+
+    /* Gold text accent */
+    .text-gold { color: var(--gold); }
+
+    /* Section divider */
+    .section-divider {
+      width: 1px;
+      height: 80px;
+      background: linear-gradient(to bottom, transparent, var(--border), transparent);
+      margin: 0 auto;
+    }
+  </style>
+</head>
+
+<body class="grain" x-data="{
+  menuOpen: false,
+  submitted: false,
+  activeCategory: 'All',
+  navItems: [
+    { name: 'Work',       link: '#work'       },
+    { name: 'Philosophy', link: '#philosophy'  },
+    { name: 'Contact',    link: '#contact'     }
+  ],
+  categories: ['All', 'Academic', 'Systems', 'Motion'],
+  projects: [
+    { id: 1, title: 'Aptech Labs',  cat: 'Academic', num: '01', img: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1400', desc: 'Core software engineering modules and computational logic studies at the intersection of theory and practice.' },
+    { id: 2, title: 'Ether Frame',  cat: 'Systems',  num: '02', img: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1400', desc: 'Robust logical frameworks engineered for enterprise scalability and long-term resilience.' },
+    { id: 3, title: 'Neo Kinetic',  cat: 'Motion',   num: '03', img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1400', desc: 'Dynamic interactions and fluid user experiences that blur the boundary between interface and expression.' }
+  ],
+  skills: ['JavaScript','PHP','MySQL','HTML/CSS','Figma','React','Node.js','UI/UX'],
+  get filtered() {
+    return this.activeCategory === 'All' ? this.projects : this.projects.filter(p => p.cat === this.activeCategory);
+  },
+  scrollTo(id) {
+    this.menuOpen = false;
+    const el = document.querySelector(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  }
+}" x-init="
+  // Intersection observer for scroll reveals
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('revealed');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+  const revealAll = () => {
+    document.querySelectorAll('[data-reveal], [data-stagger]').forEach(el => io.observe(el));
+  };
+  // Run after page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', revealAll);
+  } else {
+    setTimeout(revealAll, 100);
+  }
+">
+
+  <!-- ── Pure JS Loader Dismissal (no Alpine needed) ──────── -->
+  <script>
+    (function() {
+      function dismissLoader() {
+        var loader = document.getElementById('pageLoader');
+        if (loader) {
+          loader.classList.add('done');
+        }
+      }
+      // Dismiss after bar animation finishes (1.3s bar + small buffer)
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+          setTimeout(dismissLoader, 1500);
+        });
+      } else {
+        setTimeout(dismissLoader, 1500);
+      }
+    })();
+  </script>
+
+  <!-- ── Progress Bar ────────────────────────────────────── -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- ── Custom Cursor ──────────────────────────────────── -->
+  <div class="cursor-dot"  id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ── Page Loader ────────────────────────────────────── -->
+  <div class="page-loader" id="pageLoader" aria-hidden="true">
+    <div style="text-align:center">
+      <p class="loader-text" style="margin-bottom:1.5rem">Initializing</p>
+      <div class="loader-bar-wrap"><div class="loader-bar"></div></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       NAVIGATION
+  ══════════════════════════════════════════════════════════ -->
+  <header class="nav-blur fixed top-0 w-full z-50 flex items-center justify-between px-6 py-4 lg:px-10 lg:py-5" id="mainNav">
+    <a href="#" @click.prevent="scrollTo('#top')"
+       class="text-sm font-bold tracking-tight text-white uppercase italic select-none">
+      JH.
+      <span class="text-[9px] font-normal ml-1 opacity-30 not-italic normal-case">portfolio</span>
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="hidden lg:flex items-center gap-1 nav-pill rounded-full px-2 py-1.5">
+      <template x-for="item in navItems" :key="item.name">
+        <a :href="item.link" @click.prevent="scrollTo(item.link)"
+           class="text-white/70 hover:text-white text-[11px] font-medium px-5 py-2 rounded-full hover:bg-white/8 transition-all duration-200 uppercase tracking-widest"
+           x-text="item.name"></a>
+      </template>
+    </nav>
+
+    <button @click="scrollTo('#contact')"
+            class="hidden lg:flex btn-primary btn-white text-[10px]">
+      Get in Touch
+    </button>
+
+    <!-- Mobile menu toggle -->
+    <button @click="menuOpen = !menuOpen" class="lg:hidden text-white p-2" aria-label="Menu">
+      <span class="block w-5 h-px bg-white transition-all duration-300" :class="menuOpen && 'rotate-45 translate-y-1.5'"></span>
+      <span class="block w-5 h-px bg-white mt-1.5 transition-all duration-300" :class="menuOpen && '-rotate-45'"></span>
+    </button>
+  </header>
+
+  <!-- Mobile menu overlay -->
+  <div x-show="menuOpen" x-transition:enter="transition duration-300"
+       x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+       x-transition:leave="transition duration-200"
+       x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+       class="fixed inset-0 z-40 bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center gap-8 lg:hidden">
+    <template x-for="item in navItems" :key="item.name">
+      <a :href="item.link" @click.prevent="scrollTo(item.link)"
+         class="text-2xl font-light text-white uppercase tracking-widest" x-text="item.name"></a>
+    </template>
+    <button @click="scrollTo('#contact'); menuOpen=false"
+            class="btn-primary btn-white mt-4 text-[10px]">Get in Touch</button>
+  </div>
+
+  <main id="top">
+
+    <!-- ═══════════════════════════════════════════════════════
+         HERO
+    ══════════════════════════════════════════════════════════ -->
+    <section class="hero-section">
+      <div class="hero-parallax" id="heroParallax">
+        <video class="hero-video" id="heroVideo"
+               src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260508_155101_f2540600-6fe9-433e-8e48-b3f4b72f0727.mp4"
+               autoplay loop muted playsinline
+               poster="https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1600">
+        </video>
+      </div>
+      <div class="hero-overlay"></div>
+
+      <div class="hero-content">
+        <div class="hero-eyebrow">Mohammad Junaid — Software Engineer, Karachi</div>
+        <h1 class="hero-title text-white font-display">
+          Where precision finds<br class="hidden sm:block" /> its edge and vision<br class="hidden sm:block" />
+          <span class="text-gold italic">rewrites</span> what comes next
+        </h1>
+        <p class="hero-sub">
+          Building software that lives at the intersection of craft and code — designed to endure, engineered to perform.
+        </p>
+        <div class="hero-cta-group">
+          <button @click="scrollTo('#work')" class="btn-primary btn-white">
+            View Work
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+          <button @click="scrollTo('#contact')" class="btn-primary btn-outline">Let's Talk</button>
+        </div>
+      </div>
+
+      <div class="scroll-indicator">
+        <div class="scroll-line"></div>
+        <span style="font-size:8px;letter-spacing:0.4em;color:rgba(255,255,255,0.25);text-transform:uppercase;font-weight:700;">Scroll</span>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         MARQUEE
+    ══════════════════════════════════════════════════════════ -->
+    <div class="marquee-wrap" aria-hidden="true">
+      <div class="marquee-track" id="marqueeTrack">
+        <!-- duplicated for seamless loop -->
+        <template x-for="i in 2">
+          <div style="display:flex">
+            <div class="marquee-item"><span>Software Engineering</span><span class="marquee-dot"></span></div>
+            <div class="marquee-item"><span>Full-Stack Development</span><span class="marquee-dot"></span></div>
+            <div class="marquee-item"><span>UI / UX Design</span><span class="marquee-dot"></span></div>
+            <div class="marquee-item"><span>Systems Architecture</span><span class="marquee-dot"></span></div>
+            <div class="marquee-item"><span>E-Commerce</span><span class="marquee-dot"></span></div>
+            <div class="marquee-item"><span>Creative Technology</span><span class="marquee-dot"></span></div>
+            <div class="marquee-item"><span>Karachi, PK</span><span class="marquee-dot"></span></div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════
+         STATS
+    ══════════════════════════════════════════════════════════ -->
+    <section class="py-24 px-6 md:px-16 bg-black">
+      <div class="max-w-6xl mx-auto">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4" data-stagger>
+          <div class="stat-card">
+            <div class="stat-num" data-counter="3">0</div>
+            <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:0.75rem;font-weight:700;">Projects Built</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" data-counter="8">0</div>
+            <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:0.75rem;font-weight:700;">Technologies</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num" data-counter="2">0</div>
+            <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:0.75rem;font-weight:700;">Years Coding</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">∞</div>
+            <div style="font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-top:0.75rem;font-weight:700;">Ideas in Queue</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         WORK / PROJECTS
+    ══════════════════════════════════════════════════════════ -->
+    <section id="work" class="pb-40 bg-black">
+
+      <div class="px-6 md:px-16 pt-20 pb-16 flex flex-col md:flex-row md:items-end justify-between gap-10">
+        <div data-reveal>
+          <div class="section-label mb-4">Selected Work</div>
+          <h2 class="text-6xl md:text-8xl font-normal tracking-tighter leading-[0.85] font-display">
+            Academic<br />
+            <span class="text-white/15 italic">Artifacts</span>
+          </h2>
+        </div>
+
+        <!-- Category filters -->
+        <div class="flex flex-wrap gap-3" data-reveal="right">
+          <template x-for="cat in categories" :key="cat">
+            <button @click="activeCategory = cat"
+                    class="px-6 py-2.5 rounded-full text-[9px] uppercase tracking-[0.35em] font-black transition-all duration-200 border"
+                    :class="activeCategory === cat
+                      ? 'bg-[#c1a362] border-[#c1a362] text-black'
+                      : 'border-white/10 text-white/50 hover:border-white/30 hover:text-white'"
+                    x-text="cat"></button>
+          </template>
+        </div>
+      </div>
+
+      <div class="expanding-grid border-t border-b" style="height:700px;border-color:var(--border)" data-reveal="scale">
+        <template x-for="p in filtered" :key="p.id">
+          <div class="project-pane group" tabindex="0" role="button" :aria-label="p.title">
+            <img :src="p.img" class="project-pane-img" loading="lazy" :alt="p.title">
+
+            <!-- Vertical label -->
+            <div class="project-pane-label" x-text="p.num + ' — ' + p.cat"></div>
+
+            <!-- Hover content -->
+            <div class="project-pane-content">
+              <div style="font-size:9px;letter-spacing:0.4em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:1rem" x-text="p.cat"></div>
+              <h3 class="text-4xl md:text-5xl italic mb-4 font-display font-light" x-text="p.title"></h3>
+              <p class="text-white/45 max-w-xs text-sm leading-relaxed" x-text="p.desc"></p>
+              <div style="margin-top:1.5rem;display:flex;align-items:center;gap:0.5rem;font-size:10px;letter-spacing:0.3em;text-transform:uppercase;color:var(--gold);font-weight:700">
+                View Project
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <!-- RISER Featured Project -->
+      <div class="px-6 md:px-16 pt-20">
+        <div class="border border-[var(--border)] rounded-2xl overflow-hidden" data-reveal>
+          <div class="grid md:grid-cols-2" style="min-height:420px">
+            <div class="p-10 md:p-16 flex flex-col justify-between bg-[#080808]">
+              <div>
+                <div class="section-label mb-6">Featured — E-Commerce</div>
+                <h3 class="text-5xl md:text-6xl font-display font-light tracking-tight text-gold">RISER</h3>
+                <p class="text-white/40 mt-4 text-sm leading-relaxed max-w-sm">
+                  A Pakistan-based streetwear snapback brand built end-to-end — full-stack store with PHP, MySQL, admin panel, COD checkout in PKR, and cinematic product pages.
+                </p>
+              </div>
+              <div class="flex flex-wrap gap-2 mt-8" data-stagger>
+                <span class="skill-tag">HTML/CSS</span>
+                <span class="skill-tag">JavaScript</span>
+                <span class="skill-tag">PHP</span>
+                <span class="skill-tag">MySQL</span>
+                <span class="skill-tag">Admin Panel</span>
+              </div>
+            </div>
+            <div class="relative overflow-hidden bg-[#050505]" style="min-height:300px">
+              <img src="https://images.unsplash.com/photo-1588099768523-f4e6a5679d88?q=80&w=1000"
+                   alt="RISER brand"
+                   class="absolute inset-0 w-full h-full object-cover opacity-40 transition-all duration-700 hover:opacity-60 hover:scale-105"
+                   loading="lazy">
+              <div class="absolute inset-0" style="background:linear-gradient(135deg,rgba(193,163,98,0.08) 0%,transparent 50%)"></div>
+              <div class="absolute bottom-6 right-6 text-[10px] uppercase tracking-widest text-gold font-black">2025</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         PHILOSOPHY
+    ══════════════════════════════════════════════════════════ -->
+    <section id="philosophy" class="philosophy-section py-32 px-6 md:px-16">
+      <div class="max-w-6xl mx-auto">
+
+        <div class="grid md:grid-cols-2 gap-24 items-center">
+          <!-- Left: text -->
+          <div>
+            <div data-reveal class="mb-6">
+              <span class="philosophy-pill">
+                <span style="width:6px;height:6px;border-radius:50%;background:var(--gold);display:inline-block"></span>
+                Design Philosophy
+              </span>
+            </div>
+
+            <h2 class="text-5xl md:text-6xl font-display font-light tracking-tight leading-tight mb-10" data-reveal>
+              Code is a<br />
+              <span class="text-gold italic">craft,</span><br />
+              not a commodity.
+            </h2>
+
+            <div class="space-y-6 text-white/50 text-sm leading-relaxed" data-reveal>
+              <p>
+                I believe software engineering lives closest to architecture — structures are built to serve people, yet must also hold meaning beyond pure function. Every interface is an argument about how things should be.
+              </p>
+              <p>
+                My approach: understand the problem deeply before touching code, then build in layers — logic first, then resilience, then beauty. Shortcuts compound into technical debt; precision compounds into trust.
+              </p>
+            </div>
+
+            <div class="mt-12 flex flex-wrap gap-2" data-stagger>
+              <template x-for="skill in skills" :key="skill">
+                <span class="skill-tag" x-text="skill"></span>
+              </template>
+            </div>
+          </div>
+
+          <!-- Right: timeline -->
+          <div class="space-y-10" data-reveal="right">
+
+            <div class="timeline-item pb-10">
+              <div class="timeline-year">2023</div>
+              <div class="timeline-line"></div>
+              <div class="relative pl-4">
+                <div class="timeline-dot" style="left:calc(-2rem + 1px)"></div>
+                <div class="text-[10px] uppercase tracking-widest text-gold font-black mb-2">Origin</div>
+                <h4 class="text-lg font-medium mb-2">Enrolled — Software Engineering</h4>
+                <p class="text-white/40 text-sm leading-relaxed">Began formal studies, diving deep into algorithms, data structures, and computational theory at Aptech.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item pb-10">
+              <div class="timeline-year">2024</div>
+              <div class="timeline-line"></div>
+              <div class="relative pl-4">
+                <div class="timeline-dot" style="left:calc(-2rem + 1px)"></div>
+                <div class="text-[10px] uppercase tracking-widest text-gold font-black mb-2">Build</div>
+                <h4 class="text-lg font-medium mb-2">First Full-Stack Systems</h4>
+                <p class="text-white/40 text-sm leading-relaxed">Shipped Ether Frame and Neo Kinetic — real systems handling real data, moving from theory to production.</p>
+              </div>
+            </div>
+
+            <div class="timeline-item">
+              <div class="timeline-year">2025</div>
+              <div class="timeline-line"></div>
+              <div class="relative pl-4">
+                <div class="timeline-dot" style="left:calc(-2rem + 1px)"></div>
+                <div class="text-[10px] uppercase tracking-widest text-gold font-black mb-2">Launch</div>
+                <h4 class="text-lg font-medium mb-2">RISER — E-Commerce Brand</h4>
+                <p class="text-white/40 text-sm leading-relaxed">Built a streetwear brand from the ground up: store, admin panel, branding, checkout flow — the full stack.</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Big quote -->
+        <div class="mt-32 border-t border-b py-16 text-center" style="border-color:var(--border)" data-reveal="fade">
+          <p class="big-quote text-white/80 max-w-3xl mx-auto">
+            "The best engineers don't write code — they <span class="text-gold italic">architect decisions</span> that outlast the sprint."
+          </p>
+          <div class="section-label mt-8 text-center">— A principle I build by</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════════════════════
+         CONTACT
+    ══════════════════════════════════════════════════════════ -->
+    <section id="contact" class="contact-section py-32 px-6 md:px-16">
+      <div class="max-w-6xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-20 items-start">
+
+          <!-- Left -->
+          <div data-reveal="left">
+            <div class="section-label mb-6" style="color:#111;opacity:0.4">Say Hello</div>
+            <h2 class="text-6xl md:text-8xl font-display font-light tracking-tighter leading-[0.9] mb-12">
+              Let's<br /><span class="italic">Connect</span>
+            </h2>
+
+            <a href="mailto:junaidoften1@gmail.com"
+               class="block text-xl font-display border-b border-black/15 pb-3 mb-8 w-max hover:opacity-60 transition-opacity">
+              junaidoften1@gmail.com
+            </a>
+
+            <div class="flex gap-8" style="font-size:9px;letter-spacing:0.45em;text-transform:uppercase;font-weight:700">
+              <a href="https://linkedin.com" target="_blank" rel="noopener"
+                 class="hover:opacity-50 transition-opacity flex items-center gap-2">
+                LinkedIn
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
+              <a href="https://github.com/junaid4567" target="_blank" rel="noopener"
+                 class="hover:opacity-50 transition-opacity flex items-center gap-2">
+                GitHub
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
+            </div>
+
+            <div class="mt-16 p-6 rounded-2xl" style="background:rgba(0,0,0,0.04);border:1px solid rgba(0,0,0,0.07)">
+              <div style="font-size:9px;letter-spacing:0.4em;text-transform:uppercase;font-weight:700;color:rgba(0,0,0,0.35);margin-bottom:0.5rem">Currently available for</div>
+              <div style="font-size:0.9rem;color:#111;line-height:1.6">Freelance projects, internships &amp; collaborations</div>
+            </div>
+          </div>
+
+          <!-- Right: form -->
+          <div class="relative" data-reveal="right">
+            <!-- Success state -->
+            <div x-show="submitted"
+                 x-transition:enter="transition duration-400"
+                 x-transition:enter-start="opacity-0 scale-95"
+                 x-transition:enter-end="opacity-100 scale-100"
+                 class="absolute inset-0 bg-white z-20 flex flex-col items-center justify-center rounded-3xl gap-4"
+                 style="border:1px solid rgba(0,0,0,0.08)">
+              <div style="font-size:2.5rem">✓</div>
+              <p class="text-2xl font-display italic">Message sent.</p>
+              <p style="font-size:0.8rem;color:rgba(0,0,0,0.4)">I'll be in touch soon.</p>
+              <button @click="submitted = false"
+                      class="mt-2 text-[9px] uppercase tracking-widest border-b border-black/20 pb-0.5 hover:opacity-60 transition-opacity">
+                Send another
+              </button>
+            </div>
+
+            <div class="p-10 rounded-3xl" style="background:rgba(0,0,0,0.03);border:1px solid rgba(0,0,0,0.08)">
+              <form action="https://formspree.io/f/xykoyorz" method="POST"
+                    @submit.prevent="fetch($el.action, {
+                      method: 'POST',
+                      body: new FormData($el),
+                      headers: {'Accept': 'application/json'}
+                    }).then(r => { if(r.ok) submitted = true })">
+
+                <div style="margin-bottom:1.5rem">
+                  <input type="text" name="name" placeholder="YOUR NAME" required class="input-field" />
+                </div>
+                <div style="margin-bottom:1.5rem">
+                  <input type="email" name="email" placeholder="YOUR EMAIL" required class="input-field" />
+                </div>
+                <div style="margin-bottom:2rem">
+                  <textarea name="message" placeholder="YOUR MESSAGE" required rows="4" class="input-field" style="resize:none"></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary btn-black w-full justify-center text-[10px] py-5 rounded-2xl">
+                  Send Message
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                </button>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════════════════════ -->
+  <footer class="border-t py-10 px-6 md:px-16 flex flex-col md:flex-row items-center justify-between gap-6" style="border-color:var(--border);background:var(--off-black)">
+    <div class="text-[11px] uppercase tracking-widest text-white/20 font-semibold">
+      © 2025 Mohammad Junaid
+    </div>
+    <div class="flex gap-8">
+      <a href="#work" class="footer-link" @click.prevent="scrollTo('#work')">Work</a>
+      <a href="#philosophy" class="footer-link" @click.prevent="scrollTo('#philosophy')">Philosophy</a>
+      <a href="#contact" class="footer-link" @click.prevent="scrollTo('#contact')">Contact</a>
+    </div>
+    <div class="text-[10px] text-white/15 tracking-widest">Built in Karachi 🇵🇰</div>
+  </footer>
+
+  <!-- ═══════════════════════════════════════════════════════
+       SCRIPTS
+  ══════════════════════════════════════════════════════════ -->
+  <script>
+    // ── Lucide icons ────────────────────────────────────────
+    window.addEventListener('load', () => {
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
+
+    // ── Custom cursor ────────────────────────────────────────
+    const dot  = document.getElementById('cursorDot');
+    const ring = document.getElementById('cursorRing');
+
+    if (dot && ring && window.matchMedia('(hover: hover)').matches) {
+      let mx = 0, my = 0, rx = 0, ry = 0;
+      let rafId = null;
+
+      document.addEventListener('mousemove', e => {
+        mx = e.clientX;
+        my = e.clientY;
+        dot.style.left  = mx + 'px';
+        dot.style.top   = my + 'px';
+      });
+
+      (function animateRing() {
+        rx += (mx - rx) * 0.12;
+        ry += (my - ry) * 0.12;
+        ring.style.left = rx + 'px';
+        ring.style.top  = ry + 'px';
+        rafId = requestAnimationFrame(animateRing);
+      })();
+
+      // Hover effect on interactive elements
+      const hoverEls = document.querySelectorAll('a, button, [tabindex]');
+      hoverEls.forEach(el => {
+        el.addEventListener('mouseenter', () => ring.classList.add('cursor-hover'));
+        el.addEventListener('mouseleave', () => ring.classList.remove('cursor-hover'));
+      });
+    }
+
+    // ── Scroll progress bar ──────────────────────────────────
+    const progressBar = document.getElementById('progressBar');
+    window.addEventListener('scroll', () => {
+      const scrolled = window.scrollY;
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = maxScroll > 0 ? scrolled / maxScroll : 0;
+      progressBar.style.transform = `scaleX(${progress})`;
+    }, { passive: true });
+
+    // ── Nav scroll behavior ──────────────────────────────────
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    }, { passive: true });
+
+    // ── Hero parallax ────────────────────────────────────────
+    const heroParallax = document.getElementById('heroParallax');
+    if (heroParallax) {
+      window.addEventListener('scroll', () => {
+        const y = window.scrollY;
+        const limit = window.innerHeight;
+        if (y < limit) {
+          heroParallax.style.transform = `translateY(${y * 0.35}px)`;
+        }
+      }, { passive: true });
+    }
+
+    // ── Hero video graceful load ─────────────────────────────
+    const heroVideo = document.getElementById('heroVideo');
+    if (heroVideo) {
+      heroVideo.addEventListener('canplay', () => heroVideo.classList.add('loaded'));
+      if (heroVideo.readyState >= 3) heroVideo.classList.add('loaded');
+    }
+
+    // ── Counter animation ────────────────────────────────────
+    const counters = document.querySelectorAll('[data-counter]');
+    const counterObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const el  = entry.target;
+        const end = parseInt(el.dataset.counter, 10);
+        const dur = 1800;
+        const step = 16;
+        let current = 0;
+        const increment = end / (dur / step);
+
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= end) {
+            current = end;
+            clearInterval(timer);
+          }
+          el.textContent = Math.round(current) + (end >= 10 ? '+' : '');
+        }, step);
+
+        counterObserver.unobserve(el);
+      });
+    }, { threshold: 0.5 });
+
+    counters.forEach(c => counterObserver.observe(c));
+
+    // ── Scroll reveal (additional pass after Alpine init) ────
+    // Alpine's x-init handles the IntersectionObserver; this catches
+    // any elements added after the initial paint.
+    document.addEventListener('DOMContentLoaded', () => {
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            e.target.classList.add('revealed');
+            io.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+      setTimeout(() => {
+        document.querySelectorAll('[data-reveal], [data-stagger]').forEach(el => io.observe(el));
+      }, 200);
+    });
+
+    // ── Reduced motion: disable all animations ───────────────
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const style = document.createElement('style');
+      style.textContent = `
+        *, *::before, *::after {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+        [data-reveal] { opacity: 1 !important; transform: none !important; }
+        [data-stagger] > * { opacity: 1 !important; transform: none !important; }
+      `;
+      document.head.appendChild(style);
+    }
+  </script>
+</body>
+</html>
